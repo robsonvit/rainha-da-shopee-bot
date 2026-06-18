@@ -234,7 +234,8 @@ def gerar_audio_tts(titulo_noticia):
         import edge_tts
 
         async def _gerar_edge():
-            communicate = edge_tts.Communicate(texto, voice="pt-BR-AntonioNeural", rate="+50%")
+            # rate="+0%" equivale a 1.0x da velocidade normal (padrão)
+            communicate = edge_tts.Communicate(texto, voice="pt-BR-AntonioNeural", rate="+0%")
             await communicate.save(tts_file)
 
         try:
