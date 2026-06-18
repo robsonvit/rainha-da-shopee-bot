@@ -24,11 +24,26 @@ jobs:
       - name: 📦 Instalar dependências Python
         run: pip install -r requirements.txt
 
-      - name: 🌐 Instalar Playwright + Chromium
+      - name: 🌐 Instalar Playwright + Chromium (Rápido)
+        id: playwright_fast
+        continue-on-error: true
         run: python -m playwright install chromium
 
+      - name: 🌐 Instalar Playwright + Chromium (Lento - Fallback)
+        if: steps.playwright_fast.outcome == 'failure'
+        run: python -m playwright install --with-deps chromium
+
       - name: 🎥 Instalar FFmpeg (Rápido)
+        id: ffmpeg_fast
+        continue-on-error: true
         uses: AnimMouse/setup-ffmpeg@v1
+
+      - name: 🎥 Instalar FFmpeg (Lento - Fallback)
+        if: steps.ffmpeg_fast.outcome == 'failure'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version
 
       - name: 🛍️ Rodar Bot Rainha da Shopee
         env:
