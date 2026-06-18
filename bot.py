@@ -406,6 +406,58 @@ def publicar_reel(page_id, token, video_path, message):
         log.error(f"Erro no processo de publicação de Reel: {e}")
         return None
 
+def publicar_story_video(page_id, token, video_path):
+    """
+    Publica um vídeo como Story no Facebook usando o processo de 3 etapas.
+    A API não suporta stickers de link, então posta o vídeo puro.
+    """
+    log.info("🚀 Iniciando upload de Story...")
+    try:
+        url_init = f"https://graph.facebook.com/v22.0/{page_id}/video_stories"
+        res_init = requests.post(url_init, params={
+            "upload_phase": "start",
+            "access_token": token
+        }, timeout=30).json()
+        
+        video_id = res_init.get("video_id")
+        if not video_id:
+            log.error(f"Erro ao iniciar sessão Story: {res_init}")
+            return None
+            
+        file_size = os.path.getsize(video_path)
+        url_upload = f"https://rupload.facebook.com/video-upload/v22.0/{video_id}"
+        headers = {
+            "Authorization": f"OAuth {token}",
+            "offset": "0",
+            "file_size": str(file_size),
+            "Content-Type": "application/octet-stream"
+        }
+        with open(video_path, "rb") as f:
+            res_up = requests.post(url_upload, headers=headers, data=f, timeout=120)
+            
+        if res_up.status_code != 200:
+            log.error(f"Erro no upload binário do Story: {res_up.text}")
+            return None
+            
+        url_finish = f"https://graph.facebook.com/v22.0/{page_id}/video_stories"
+        payload = {
+            "upload_phase": "finish",
+            "video_id": video_id,
+            "access_token": token
+        }
+        res_finish = requests.post(url_finish, data=payload, timeout=30).json()
+        
+        if res_finish.get("success"):
+            log.info(f"✅ STORY PUBLICADO! ID: {video_id}")
+            return video_id
+        else:
+            log.error(f"Erro ao finalizar Story: {res_finish}")
+            return None
+            
+    except Exception as e:
+        log.error(f"Erro no processo de publicação de Story: {e}")
+        return None
+
 def publicar_imagem(page_id, token, img_path, message):
     """
     Publica uma foto na página do Facebook.
@@ -832,6 +884,10 @@ def main():
                 import time
                 time.sleep(5)
                 comentar_no_post(video_id, FB_TOKEN, n["link"])
+                
+                # --- Publicar o mesmo vídeo como Story ---
+                time.sleep(3)
+                publicar_story_video(FB_PAGE_ID, FB_TOKEN, temp_video)
 
                 img_post_id = publicar_imagem(FB_PAGE_ID, FB_TOKEN, temp_post_img, msg)
                 if img_post_id:
