@@ -162,9 +162,9 @@ FB_REACTIONS = {
 
 def gerar_gancho(title):
     default_res = {
-        "hook": "BOMBA!!", "tag": "ACHADO SHOPEE",
+        "hook": "BOMBA!!", "tag": "NOTÍCIA URGENTE",
         "color": (255, 87, 34, 200), "emoji": "1f6d2",
-        "hashtags": "#shopee #rainhadashopee #achados",
+        "hashtags": "#noticia #urgente #bomba #foryou #viral",
         "category": "OFERTA",
         "reactions": [("1f631", "Incrível!"), ("1f44d", "Quero!"), ("1f621", "Caro demais")],
         "misterio": "VEJA ESSE ACHADO INCRÍVEL DA SHOPEE"
@@ -790,12 +790,11 @@ def main():
             if not gerar_video_ffmpeg(temp_reel_bg, temp_reel_text, audio_sel, temp_tts, temp_video, duration=duracao_random):
                 continue
 
-            hashtags = estetica.get("hashtags", "#shopee #rainhadashopee #achados").lower()
-            misterio = estetica.get("misterio", "VEJA ESSE ACHADO INCRÍVEL DA SHOPEE")
+            hashtags = estetica.get("hashtags", "#noticia #urgente #bomba #foryou #viral").lower()
+            misterio = estetica.get("misterio", "VEJA ESSA NOTÍCIA URGENTE")
 
             if "#viral" not in hashtags: hashtags += " #viral"
             if "#foryou" not in hashtags: hashtags += " #foryou"
-            if "#shopee" not in hashtags: hashtags += " #shopee"
 
             msg = (
                 f"🔴VEJA COMPLETO NO LINK🔗: {n['link']}\n"
