@@ -876,6 +876,9 @@ def main():
 
             padding_bottom = "\n.\n.\n.\n"
             msg = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio}... 😱\n.\n{hashtags}{padding_bottom}👇 O link da notícia completa está no primeiro comentário 👇"
+            
+            # Legenda específica para imagem: curta, sem hashtags, finalizando em "Ver mais..."
+            msg_img = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio}... Ver mais..."
 
             video_id = publicar_reel(FB_PAGE_ID, FB_TOKEN, temp_video, msg)
 
@@ -890,7 +893,7 @@ def main():
                 time.sleep(3)
                 publicar_story_video(FB_PAGE_ID, FB_TOKEN, temp_video)
 
-                img_post_id = publicar_imagem(FB_PAGE_ID, FB_TOKEN, temp_post_img, msg)
+                img_post_id = publicar_imagem(FB_PAGE_ID, FB_TOKEN, temp_post_img, msg_img)
                 if img_post_id:
                     log.info(f"📸 Sucesso! A imagem também foi postada.")
                     time.sleep(3)
