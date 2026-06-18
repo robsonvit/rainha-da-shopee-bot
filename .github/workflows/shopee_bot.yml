@@ -25,10 +25,10 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: 🌐 Instalar Playwright + Chromium
-        run: python -m playwright install --with-deps chromium
+        run: python -m playwright install chromium
 
-      - name: 🎬 Instalar FFmpeg
-        uses: AnimMouse/setup-ffmpeg@v1
+      - name: 🎥 Instalar FFmpeg (Rápido)
+        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: 🛍️ Rodar Bot Rainha da Shopee
         env:
