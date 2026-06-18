@@ -179,7 +179,7 @@ def gerar_gancho(title):
         f"Retorne APENAS um JSON válido com a seguinte estrutura:\n"
         "{\n"
         "  \"hook\": \"Título em CAIXA ALTA, muito humano, coeso e extremamente curioso para atrair cliques (máx 6 palavras, evite palavras soltas/sem sentido). CAMUFLE palavras sensíveis (M0RT3, S@NGU3)\",\n"
-        "  \"tag\": \"Categoria curta (ex: URGENTE, ACHADO, OFERTA, INCRÍVEL, VIRAL)\",\n"
+        "  \"tag\": \"Uma ÚNICA palavra em MAIÚSCULO definindo a categoria da notícia (ex: FOFOCA, POLÍTICA, BRASIL, ESPORTE, VIRAL)\",\n"
         "  \"emoji\": \"código hexadecimal do emoji sem U+, ex: 1f6d2\",\n"
         "  \"hashtags\": \"#hashtag1 #hashtag2 #hashtag3\",\n"
         "  \"misterio\": \"Frase incompleta que gere curiosidade (ex: O que foi descoberto vai te chocar...)\"\n"
@@ -467,11 +467,17 @@ def adicionar_texto_premium(img_bytes, dados_esteticos):
             draw_ov.line([(0, y), (W, y)], fill=(255, 87, 34, min(200, alpha)))
         canvas = Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
 
-        # 2. Imagem Nítida Central (Respeitando qualquer aspect ratio - 16:9, etc)
-        max_w = int(W * 0.85)
-        max_h = int(H * 0.55)
-        img_sharp = img_orig.copy()
-        img_sharp.thumbnail((max_w, max_h), Image.Resampling.LANCZOS)
+        # 2. Imagem Nítida Central (Aumentada para ficar grande na tela)
+        max_w = int(W * 0.90)
+        max_h = int(H * 0.58)
+        orig_w, orig_h = img_orig.size
+        # Calcula a escala exata para usar todo o espaço possível
+        ratio_w = max_w / orig_w
+        ratio_h = max_h / orig_h
+        scale = min(ratio_w, ratio_h)
+        new_w = int(orig_w * scale)
+        new_h = int(orig_h * scale)
+        img_sharp = img_orig.resize((new_w, new_h), Image.Resampling.LANCZOS)
 
         # Sombra leve atrás da imagem principal
         shadow = Image.new("RGBA", (img_sharp.width + int(30*sf), img_sharp.height + int(30*sf)), (0, 0, 0, 0))
@@ -521,9 +527,6 @@ def adicionar_texto_premium(img_bytes, dados_esteticos):
         for line in lines:
             draw.text((bar_x + int(40 * sf), y_text), line, fill="white", font=f_text)
             y_text += int(85 * sf)
-
-        # Marca da Rainha da Shopee no rodapé em dourado
-        draw.text((W // 2, int(H * 0.96)), "🛍️ RAINHA DA SHOPEE", fill=(255, 193, 7), font=f_brand, anchor="mm")
 
         return canvas, text_layer
 
@@ -795,8 +798,6 @@ def main():
             if "#shopee" not in hashtags: hashtags += " #shopee"
 
             msg = (
-                f"🛍️ {misterio}...\n"
-                f".\n"
                 f"🔴VEJA COMPLETO NO LINK🔗: {n['link']}\n"
                 f".\n"
                 f".\n"
