@@ -621,6 +621,31 @@ def salvar_links_noticias(noticias: list):
         log.warning(f"⚠️ Não foi possível salvar links_noticias.json: {e}")
 
 
+
+def comentar_no_post(object_id, token, link_noticia):
+    """
+    Posta o link da notícia como primeiro comentário em uma publicação.
+    """
+    if not object_id or not link_noticia:
+        log.warning("⚠️ comentar_no_post: object_id ou link_noticia ausente. Comentário ignorado.")
+        return None
+    try:
+        url = f"https://graph.facebook.com/v22.0/{object_id}/comments"
+        payload = {
+            "message": f"🔗 Leia a notícia completa aqui: {link_noticia}",
+            "access_token": token
+        }
+        res = requests.post(url, data=payload, timeout=30).json()
+        if res.get("id"):
+            log.info(f"💬 Comentário com link postado! ID: {res['id']} → {link_noticia[:70]}")
+            return res["id"]
+        else:
+            log.warning(f"⚠️ Não foi possível postar comentário: {res}")
+            return None
+    except Exception as e:
+        log.error(f"❌ Erro ao postar comentário: {e}")
+        return None
+
 def get_noticias():
     import datetime
     from playwright.sync_api import sync_playwright
@@ -796,21 +821,23 @@ def main():
             if "#viral" not in hashtags: hashtags += " #viral"
             if "#foryou" not in hashtags: hashtags += " #foryou"
 
-            msg = (
-                f"🔴VEJA COMPLETO NO LINK🔗: {n['link']}\n"
-                f".\n"
-                f".\n"
-                f"{hashtags}"
-            )
+            padding_bottom = "\n.\n.\n.\n"
+            msg = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio}... 😱\n.\n{hashtags}{padding_bottom}👇 O link da notícia completa está no primeiro comentário 👇"
 
             video_id = publicar_reel(FB_PAGE_ID, FB_TOKEN, temp_video, msg)
 
             if video_id:
                 log.info(f"🔗 LINK REEL: https://www.facebook.com/reels/{video_id}/")
 
+                import time
+                time.sleep(5)
+                comentar_no_post(video_id, FB_TOKEN, n["link"])
+
                 img_post_id = publicar_imagem(FB_PAGE_ID, FB_TOKEN, temp_post_img, msg)
                 if img_post_id:
                     log.info(f"📸 Sucesso! A imagem também foi postada.")
+                    time.sleep(3)
+                    comentar_no_post(img_post_id, FB_TOKEN, n["link"])
 
                 # Salvar link para verificação posterior
                 with open("ultimo_post.txt", "w", encoding="utf-8") as f:
