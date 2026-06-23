@@ -227,7 +227,7 @@ def gerar_audio_tts(titulo_noticia):
     Tenta usar edge-tts (API Python) para voz masculina, se falhar, usa gTTS.
     """
     import asyncio
-    texto = f"{titulo_noticia}. Veja completo no link azul na legenda."
+    texto = f"{titulo_noticia}. Veja completo no link azul na legenda. Para se manter informado, clique no joinha e no seguir."
     tts_file = "temp_tts.mp3"
 
     try:
