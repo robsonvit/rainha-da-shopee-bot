@@ -875,11 +875,11 @@ def main():
             if "#foryou" not in hashtags: hashtags += " #foryou"
 
             padding_bottom = "\n.\n.\n.\n"
-            msg = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio}... 😱\n.\n{hashtags}{padding_bottom}👇 O link da notícia completa está no primeiro comentário 👇"
+            msg = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio}... 😱\n.\n{hashtags}{padding_bottom}🔗VEJA MAIS NO LINK: {n['link']}\n\n👇 O link da notícia também está no primeiro comentário 👇"
             
-            # Legenda específica para imagem: super curta para não ser cortada no celular
-            misterio_curto = misterio[:20].strip()
-            msg_img = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio_curto}... Ver mais..."
+            # Legenda da imagem: inclui link da notícia antes das hashtags (link azul clicável)
+            misterio_curto = misterio[:60].strip()
+            msg_img = f"😱 {estetica.get('tag', 'OFERTA').upper()}: {misterio_curto}...\n.\n🔗 Leia a notícia completa: {n['link']}\n.\n{hashtags}\n.\n👇 Link também no primeiro comentário 👇"
 
             video_id = publicar_reel(FB_PAGE_ID, FB_TOKEN, temp_video, msg)
 
